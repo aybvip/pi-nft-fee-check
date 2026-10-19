@@ -1,0 +1,18 @@
+{
+  "name": "pi-nft-fee-check",
+  "version": "0.1.0",
+  "description": "Read-only fee reconciliation for Pi NFT marketplaces. Compares declared basis-point schedules against observed on-chain event fees.",
+  "type": "module",
+  "main": "fee-check.mjs",
+  "bin": {
+    "pi-nft-fee-check": "./fee-check.mjs"
+  },
+  "scripts": {
+    "check": "node fee-check.mjs"
+  },
+  "keywords": ["pi", "nft", "fees", "reconciliation", "marketplace", "read-only"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
