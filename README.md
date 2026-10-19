@@ -77,6 +77,25 @@ for exact comparison.
 | That the events are authentic | The caller supplies them; provenance of the event set is a separate question. |
 | That the venue owns the fee-receiving address | On-chain data never proves venue ownership. |
 
+## Tests
+
+```bash
+node --test test.mjs
+```
+
+12 offline checks, no network:
+
+- matching fees report `matched` and exit `0`
+- a fee mismatch is reported as `MISMATCH` and exits `2`
+- a zero-bps action must carry a zero fee
+- `--tolerance 0` is strict; a wider tolerance absorbs float drift
+- unknown event types are skipped, not counted
+- both the bare-array and `{ "events": [...] }` shapes are accepted
+- an empty event list reports `events_checked: 0` and exits `0`
+- non-numeric `amount` / `fee` rows are skipped safely instead of producing `NaN`
+- malformed JSON exits `1`
+- `100 bps = 1 %` is verified on both a large and a fractional amount
+
 ## See also
 
 - `pi-nft-provenance` — who created a token, and when

@@ -8,6 +8,7 @@
     "pi-nft-fee-check": "./fee-check.mjs"
   },
   "scripts": {
+    "test": "node --test test.mjs",
     "check": "node fee-check.mjs"
   },
   "keywords": ["pi", "nft", "fees", "reconciliation", "marketplace", "read-only"],
