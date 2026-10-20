@@ -1,0 +1,50 @@
+# Pi NFT Fee Reconciliation — llms.txt
+# A read-only, zero-dependency reconciler between a declared NFT-marketplace fee
+# schedule (basis points) and the fees actually observed in on-chain events.
+
+> A published fee schedule is a claim, not a measurement. The only way to know
+> whether a stated fee was actually charged is to compare it against what the
+> chain recorded. This tool does that comparison deterministically.
+
+## What it is
+- read-only, zero-dependency, Node (ESM), Node >= 18
+- fee-check.mjs: the CLI (--config --events --tolerance)
+- test.mjs: 12 offline checks (node --test)
+- never writes; no database; no API keys
+
+## Why it exists
+Marketplaces publish a fee schedule, but a published number is a claim, not a
+measurement. This tool recomputes the EXPECTED fee from the declared rate and the
+observed amount, and reports any mismatch, so a reviewer can see the discrepancy
+directly instead of trusting a dashboard.
+
+## Input formats
+fees.json — declared schedule in basis points (1 bps = 0.01 %):
+  { "listBps": 0, "buyBps": 250, "acceptBps": 0, "currency": "PI" }
+events.json — array (or { "events": [...] }) of observed events:
+  [ { "type": "buy", "amount": "12.5", "fee": "0.3125", "tx": "..." } ]
+
+## Output shape
+Per event: [n] type amount= expected= observed= OK|MISMATCH. Then a # Summary:
+events_checked, matched, mismatches.
+Exit codes: 0 all matched; 2 one or more mismatches; 1 error.
+
+## Tolerance
+Fees are computed in floating point, so --tolerance (same unit as the amounts,
+default 0) absorbs rounding at the last displayed digit. Set 0 for exact.
+
+## Usage
+- node fee-check.mjs --config fees.json --events events.json
+- node fee-check.mjs --config fees.json --events events.json --tolerance 1
+- node --test test.mjs
+
+## Not claimed
+- that the declared rate is CORRECT (it only checks whether the observed fee
+  matches the declared rate)
+- that no fee was taken outside the checked events (it reconciles only the events
+  supplied)
+- that the events are authentic (the caller supplies them; their provenance is a
+  separate question)
+- that the venue owns the fee-receiving address (on-chain data never proves venue
+  ownership)
+- that Pi Network has adopted, reviewed or endorsed this
